@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Parkeren in Den Bosch — live vrije plekken</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,6 +16,16 @@
 </header>
 
 <main>
+  <section id="mapwrap">
+    <div id="map"></div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--green)"></i> Vrij</span>
+      <span><i class="dot" style="background:var(--orange)"></i> Bijna vol</span>
+      <span><i class="dot" style="background:var(--red)"></i> Vol</span>
+      <span><i class="dot" style="background:var(--gray)"></i> Gesloten / onbekend</span>
+    </div>
+  </section>
+
   <section class="toolbar">
     <input type="search" id="filter" placeholder="Filter op naam of adres…" aria-label="Filter">
     <select id="sort" aria-label="Sorteren">
@@ -55,10 +67,13 @@
   <p>
     Bron: <a href="https://npropendata.rdw.nl/parkingdata/v2/">RDW Open Parkeerdata (Nationaal Parkeer Register, SPDP 2.0)</a> —
     statische en dynamische data van gemeente 's-Hertogenbosch (gebiedsbeheerder 796).
+    Kaart: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-bijdragers, tiles via Leaflet.
     Data is gratis en open (CC-BY 4.0). Dit is een onofficieel prototype; controleer de borden ter plaatse.
   </p>
 </footer>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="fallback-data.js"></script>
 <script src="app.js"></script>
 </body>

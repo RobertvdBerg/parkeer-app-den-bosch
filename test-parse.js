@@ -57,6 +57,17 @@ assert.strictEqual(sandbox.statusOf(sandbox.mergeFacility({}, staticSample, {
   parkingFacilityDynamicInformation: { facilityActualStatus: { open: false, parkingCapacity: 335, vacantSpaces: 100 } }
 })).label, "Gesloten");
 assert.ok(sandbox.isDenBoschName("Parkeergarage Wolvenhoek ('s-Hertogenbosch)"));
+assert.ok(sandbox.isDenBoschName("P+R Mayweg (Den Bosch)"));
 assert.ok(!sandbox.isDenBoschName("parkeergarage Forum (Groningen)"));
-assert.strictEqual(vm.runInContext("FALLBACK_FACILITIES.length", sandbox), 12);
+assert.ok(!sandbox.isDenBoschName("P+R Oudenbosch (Oudenbosch)"));
+assert.ok(!sandbox.isDenBoschName("Straatparkeren Den Boschstraat (Amsterdam)"));
+
+const deduped = sandbox.dedupeFacilities([
+  { name: "P+R Magistratenlaan (Den Bosch)", vacantSpaces: null, lastUpdated: null },
+  { name: "P+R Magistratenlaan (den bosch)", vacantSpaces: 120, lastUpdated: new Date() },
+  { name: "Parkeergarage Wolvenhoek", vacantSpaces: 30, lastUpdated: new Date() }
+]);
+assert.strictEqual(deduped.length, 2);
+assert.strictEqual(deduped[0].vacantSpaces, 120);
+assert.strictEqual(vm.runInContext("FALLBACK_FACILITIES.length", sandbox), 15);
 console.log("Alle parse-tests geslaagd.");

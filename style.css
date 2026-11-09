@@ -62,6 +62,47 @@ main { max-width: 1100px; margin: 0 auto; padding: 1rem 1.5rem 3rem; }
 
 .toolbar button:hover { border-color: var(--accent); }
 
+#mapwrap { position: relative; margin-top: 1rem; }
+
+#map {
+  height: 420px;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  z-index: 0;
+}
+
+.legend {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: .5rem;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.legend .dot {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  margin-right: .3rem;
+}
+
+.marker-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: .8rem;
+  color: #0b0f14;
+  border: 2px solid rgba(255,255,255,.7);
+  box-shadow: 0 1px 4px rgba(0,0,0,.5);
+}
+
+.popup-name { font-weight: 700; }
+.popup-status { font-weight: 600; }
+.popup-meta { font-size: .8rem; color: #555; }
+
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

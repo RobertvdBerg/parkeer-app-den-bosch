@@ -1,8 +1,58 @@
 const NPR_INDEX_URL = "https://npropendata.rdw.nl/parkingdata/v2/";
-const CITY_PATTERN = /(s[-\s]?hertogenbosch|den[\s-]?bosch)/i;
+const CITY_PATTERN = /\b(s[-\s]?hertogenbosch|den[\s-]?bosch)\b/i;
 const REFRESH_INTERVAL_MS = 30000;
 
 const cardsEl = document.getElementById("cards");
+const mapEl = document.getElementById("map");
+
+let map = null;
+let markerLayer = null;
+
+function initMap() {
+  if (typeof L === "undefined" || !mapEl) return;
+  map = L.map("map").setView([51.69, 5.31], 13);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>-bijdragers"
+  }).addTo(map);
+  markerLayer = L.layerGroup().addTo(map);
+}
+
+function statusColor(st) {
+  if (st.cls === "vrij") return "#2ecc71";
+  if (st.cls === "bijna-vol") return "#f39c12";
+  if (st.cls === "vol") return "#e74c3c";
+  return "#7f8c9b";
+}
+
+function renderMap() {
+  if (!map || !markerLayer) return;
+  markerLayer.clearLayers();
+  const bounds = [];
+  for (const f of facilities) {
+    if (f.latitude == null || f.longitude == null) continue;
+    const st = statusOf(f);
+    const label = f.vacantSpaces != null ? String(f.vacantSpaces) : "?";
+    const icon = L.divIcon({
+      className: "",
+      html: "<div class=\"marker-num\" style=\"background:" + statusColor(st) + "\">" + label + "</div>",
+      iconSize: [34, 34],
+      iconAnchor: [17, 17]
+    });
+    const popup =
+      "<div class=\"popup-name\">" + f.name + "</div>" +
+      "<div class=\"popup-status\" style=\"color:" + statusColor(st) + "\">" + st.label + "</div>" +
+      (f.vacantSpaces != null
+        ? "<div>" + f.vacantSpaces + " vrije plekken" + (f.capacity ? " van " + f.capacity : "") + "</div>"
+        : "<div>bezetting onbekend</div>") +
+      (f.address ? "<div class=\"popup-meta\">" + f.address + "</div>" : "") +
+      (f.lastUpdated ? "<div class=\"popup-meta\">live: " + f.lastUpdated.toLocaleTimeString("nl-NL") + "</div>" : "") +
+      (routeUrl(f) ? "<div><a href=\"" + routeUrl(f) + "\" target=\"_blank\" rel=\"noopener\">Route plannen →</a></div>" : "");
+    L.marker([f.latitude, f.longitude], { icon: icon }).bindPopup(popup).addTo(markerLayer);
+    bounds.push([f.latitude, f.longitude]);
+  }
+  if (bounds.length > 0) map.fitBounds(bounds, { padding: [30, 30] });
+}
 const statusEl = document.getElementById("statusline");
 const filterEl = document.getElementById("filter");
 const sortEl = document.getElementById("sort");
@@ -18,9 +68,15 @@ function setStatus(text, isError) {
 }
 
 async function fetchJson(url) {
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) throw new Error("HTTP " + res.status + " voor " + url);
-  return res.json();
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status + " voor " + url);
+    return await res.json();
+  } catch (directErr) {
+    const res = await fetch("proxy.php?url=" + encodeURIComponent(url), { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status + " via proxy voor " + url);
+    return await res.json();
+  }
 }
 
 function isDenBoschName(name) {
@@ -82,6 +138,25 @@ function mergeFacility(entry, staticInfo, dynamicInfo) {
   };
 }
 
+function dedupeKey(name) {
+  return (name || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+}
+
+function dedupeFacilities(list) {
+  const byKey = new Map();
+  for (const f of list) {
+    const key = dedupeKey(f.name);
+    const existing = byKey.get(key);
+    if (!existing) {
+      byKey.set(key, f);
+      continue;
+    }
+    const score = (x) => (x.vacantSpaces != null ? 2 : 0) + (x.lastUpdated ? 1 : 0);
+    if (score(f) > score(existing)) byKey.set(key, f);
+  }
+  return Array.from(byKey.values());
+}
+
 async function loadLive() {
   const index = await fetchJson(NPR_INDEX_URL);
   const entries = (index && index.ParkingFacilities) || [];
@@ -90,14 +165,23 @@ async function loadLive() {
   for (const entry of candidates) {
     try {
       const staticInfo = entry.staticDataUrl ? await fetchJson(entry.staticDataUrl) : null;
-      const dynamicInfo = entry.dynamicDataUrl ? await fetchJson(entry.dynamicDataUrl) : null;
+      let dynamicInfo = null;
+      if (entry.dynamicDataUrl) {
+        dynamicInfo = await fetchJson(entry.dynamicDataUrl);
+      } else if (entry.identifier) {
+        try {
+          dynamicInfo = await fetchJson(NPR_INDEX_URL + "dynamic/" + entry.identifier);
+        } catch (e) {
+          dynamicInfo = null;
+        }
+      }
       const f = mergeFacility(entry, staticInfo, dynamicInfo);
       if (f.cityOk || isDenBoschName(f.name) || isDenBoschName(f.address)) merged.push(f);
     } catch (err) {
       merged.push(mergeFacility(entry, null, null));
     }
   }
-  return merged;
+  return dedupeFacilities(merged);
 }
 
 function statusOf(f) {
@@ -150,6 +234,7 @@ function routeUrl(f) {
 }
 
 function render() {
+  renderMap();
   const list = sortFacilities(facilities.filter(matchesFilter));
   cardsEl.innerHTML = "";
   if (list.length === 0) {
@@ -266,5 +351,6 @@ filterEl.addEventListener("input", render);
 sortEl.addEventListener("change", render);
 refreshBtn.addEventListener("click", refresh);
 
+initMap();
 refresh();
 setInterval(refresh, REFRESH_INTERVAL_MS);
