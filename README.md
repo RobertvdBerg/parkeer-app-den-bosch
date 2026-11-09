@@ -1,11 +1,13 @@
 # Parkeren in Den Bosch — live vrije plekken (prototype)
 
 Webapp die realtime toont hoeveel plekken vrij zijn in de parkeergarages en P+R-locaties
-van gemeente 's-Hertogenbosch.
+van gemeente 's-Hertogenbosch. Inclusief interactieve kaart (Leaflet/OpenStreetMap) met
+zoom, status-kleur per locatie en het aantal vrije plekken in de marker.
 
 ## Runnen
 
-Het is een statische website (geen build-stap):
+Het is een statische website (geen build-stap). De kaart laadt Leaflet + OpenStreetMap-tiles
+from een CDN in de browser:
 
 ```
 cd den-bosch-parkeren
@@ -23,7 +25,9 @@ Test van de parse-logica: `node test-parse.js`
 - `index.html` — pagina + uitleg (waarom reserveren niet kan)
 - `style.css` — opmaak
 - `app.js` — ophalen en renderen van NPR-data
-- `fallback-data.js` — statische voorbeeldlocaties voor als live data faalt
+- `fallback-data.js` — statische voorbeeldlocaties (garages + P+R/transferia: station
+  Magistratenlaan/Parallelweg/Mayweg, De Vliert, Pettelaarpark, Vlijmenseweg/Transferium West,
+  Deutersestraat, Willemspoort; coördinaten indicatief) voor als live data faalt
 - `test-parse.js` — parse-tests tegen echte NPR-voorbeeld-JSON
 
 ## Gebruikte databron (gratis, open, geen sleutel nodig)

@@ -58,5 +58,5 @@ assert.strictEqual(sandbox.statusOf(sandbox.mergeFacility({}, staticSample, {
 })).label, "Gesloten");
 assert.ok(sandbox.isDenBoschName("Parkeergarage Wolvenhoek ('s-Hertogenbosch)"));
 assert.ok(!sandbox.isDenBoschName("parkeergarage Forum (Groningen)"));
-assert.strictEqual(vm.runInContext("FALLBACK_FACILITIES.length", sandbox), 12);
+assert.strictEqual(vm.runInContext("FALLBACK_FACILITIES.length", sandbox), 15);
 console.log("Alle parse-tests geslaagd.");

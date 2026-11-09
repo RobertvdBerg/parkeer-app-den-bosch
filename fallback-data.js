@@ -49,21 +49,21 @@ const FALLBACK_FACILITIES = [
     capacity: null, vacantSpaces: null, open: true, lastUpdated: null, fallback: true
   },
   {
-    name: "P+R Magistratenlaan (Transferium)",
+    name: "P+R Magistratenlaan (Transferium, bij station)",
     type: "P+R terrein",
     address: "Magistratenlaan, 5223 MA 's-Hertogenbosch",
     latitude: 51.7009, longitude: 5.2921,
     capacity: null, vacantSpaces: null, open: true, lastUpdated: null, fallback: true
   },
   {
-    name: "P+R Parallelweg (Transferium)",
+    name: "P+R Parallelweg (Transferium, bij station)",
     type: "P+R terrein",
     address: "Parallelweg, 5223 AP 's-Hertogenbosch",
     latitude: 51.7013, longitude: 5.2944,
     capacity: null, vacantSpaces: null, open: true, lastUpdated: null, fallback: true
   },
   {
-    name: "P+R Mayweg (Station)",
+    name: "P+R Mayweg (bij station)",
     type: "P+R terrein",
     address: "Mayweg, 5211 AA 's-Hertogenbosch",
     latitude: 51.6967, longitude: 5.287,
@@ -72,15 +72,36 @@ const FALLBACK_FACILITIES = [
   {
     name: "P+R Transferium De Vliert",
     type: "P+R terrein",
-    address: "De Vliert, 's-Hertogenbosch",
-    latitude: 51.7055, longitude: 5.3245,
-    capacity: null, vacantSpaces: null, open: true, lastUpdated: null, fallback: true
+    address: "Stadionlaan 9, 5213 JH 's-Hertogenbosch",
+    latitude: 51.6725, longitude: 5.3465,
+    capacity: 700, vacantSpaces: null, open: true, lastUpdated: null, fallback: true
   },
   {
     name: "P+R Transferium Pettelaarpark",
     type: "P+R terrein",
-    address: "Pettelaarpark, 's-Hertogenbosch",
-    latitude: 51.7035, longitude: 5.3155,
+    address: "Pettelaarpark 59, 5216 PP 's-Hertogenbosch",
+    latitude: 51.6778754, longitude: 5.3360515,
+    capacity: 450, vacantSpaces: null, open: true, lastUpdated: null, fallback: true
+  },
+  {
+    name: "P+R Transferium Vlijmenseweg (Transferium West)",
+    type: "P+R terrein",
+    address: "Vlijmenseweg 10, 5223 GW 's-Hertogenbosch",
+    latitude: 51.7043, longitude: 5.318,
+    capacity: 500, vacantSpaces: null, open: true, lastUpdated: null, fallback: true
+  },
+  {
+    name: "P+R Transferium Deutersestraat",
+    type: "P+R terrein",
+    address: "Deutersestraat 2d, 5223 GW 's-Hertogenbosch",
+    latitude: 51.704, longitude: 5.298,
+    capacity: 1100, chargingPoints: 22, vacantSpaces: null, open: true, lastUpdated: null, fallback: true
+  },
+  {
+    name: "P+R Willemspoort (bij Jeroen Bosch Ziekenhuis)",
+    type: "P+R terrein",
+    address: "Willemspoort, 5223 JE 's-Hertogenbosch",
+    latitude: 51.699, longitude: 5.286,
     capacity: null, vacantSpaces: null, open: true, lastUpdated: null, fallback: true
   }
 ];
