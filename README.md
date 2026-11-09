@@ -7,7 +7,15 @@ zoom, status-kleur per locatie en het aantal vrije plekken in de marker.
 ## Runnen
 
 Het is een statische website (geen build-stap). De kaart laadt Leaflet + OpenStreetMap-tiles
-from een CDN in de browser:
+vanuit een CDN in de browser.
+
+### Belangrijk bij hosting op je eigen domein (bijv. WordPress)
+
+`npropendata.rdw.nl` stuurt geen CORS-header mee, dus een directe `fetch()` vanuit de browser
+wordt geblokkeerd ("Failed to fetch"). Daarom zit er een kleine server-side proxy bij:
+`proxy.php`. Upload álle bestanden inclusief `proxy.php` in dezelfde map. De app probeert
+eerst direct, en valt bij een CORS-fout automatisch terug op `proxy.php?url=...`.
+Zonder PHP-proxy (bijv. op GitHub Pages) toont de app de fallback-lijst.
 
 ```
 cd den-bosch-parkeren
@@ -25,6 +33,7 @@ Test van de parse-logica: `node test-parse.js`
 - `index.html` — pagina + uitleg (waarom reserveren niet kan)
 - `style.css` — opmaak
 - `app.js` — ophalen en renderen van NPR-data
+- `proxy.php` — server-side proxy voor de RDW/NPR-endpoints (om CORS te omzeilen bij hosting op eigen domein)
 - `fallback-data.js` — statische voorbeeldlocaties (garages + P+R/transferia: station
   Magistratenlaan/Parallelweg/Mayweg, De Vliert, Pettelaarpark, Vlijmenseweg/Transferium West,
   Deutersestraat, Willemspoort; coördinaten indicatief) voor als live data faalt

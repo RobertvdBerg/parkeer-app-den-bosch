@@ -68,9 +68,15 @@ function setStatus(text, isError) {
 }
 
 async function fetchJson(url) {
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) throw new Error("HTTP " + res.status + " voor " + url);
-  return res.json();
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status + " voor " + url);
+    return await res.json();
+  } catch (directErr) {
+    const res = await fetch("proxy.php?url=" + encodeURIComponent(url), { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status + " via proxy voor " + url);
+    return await res.json();
+  }
 }
 
 function isDenBoschName(name) {
