@@ -1,5 +1,5 @@
 const NPR_INDEX_URL = "https://npropendata.rdw.nl/parkingdata/v2/";
-const CITY_PATTERN = /(s[-\s]?hertogenbosch|den[\s-]?bosch)/i;
+const CITY_PATTERN = /\b(s[-\s]?hertogenbosch|den[\s-]?bosch)\b/i;
 const REFRESH_INTERVAL_MS = 30000;
 
 const cardsEl = document.getElementById("cards");
@@ -138,6 +138,25 @@ function mergeFacility(entry, staticInfo, dynamicInfo) {
   };
 }
 
+function dedupeKey(name) {
+  return (name || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+}
+
+function dedupeFacilities(list) {
+  const byKey = new Map();
+  for (const f of list) {
+    const key = dedupeKey(f.name);
+    const existing = byKey.get(key);
+    if (!existing) {
+      byKey.set(key, f);
+      continue;
+    }
+    const score = (x) => (x.vacantSpaces != null ? 2 : 0) + (x.lastUpdated ? 1 : 0);
+    if (score(f) > score(existing)) byKey.set(key, f);
+  }
+  return Array.from(byKey.values());
+}
+
 async function loadLive() {
   const index = await fetchJson(NPR_INDEX_URL);
   const entries = (index && index.ParkingFacilities) || [];
@@ -146,14 +165,23 @@ async function loadLive() {
   for (const entry of candidates) {
     try {
       const staticInfo = entry.staticDataUrl ? await fetchJson(entry.staticDataUrl) : null;
-      const dynamicInfo = entry.dynamicDataUrl ? await fetchJson(entry.dynamicDataUrl) : null;
+      let dynamicInfo = null;
+      if (entry.dynamicDataUrl) {
+        dynamicInfo = await fetchJson(entry.dynamicDataUrl);
+      } else if (entry.identifier) {
+        try {
+          dynamicInfo = await fetchJson(NPR_INDEX_URL + "dynamic/" + entry.identifier);
+        } catch (e) {
+          dynamicInfo = null;
+        }
+      }
       const f = mergeFacility(entry, staticInfo, dynamicInfo);
       if (f.cityOk || isDenBoschName(f.name) || isDenBoschName(f.address)) merged.push(f);
     } catch (err) {
       merged.push(mergeFacility(entry, null, null));
     }
   }
-  return merged;
+  return dedupeFacilities(merged);
 }
 
 function statusOf(f) {
