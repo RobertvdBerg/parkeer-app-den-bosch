@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parkeren in Den Bosch — live vrije plekken</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>🅿️ Parkeren in Den Bosch</h1>
+  <p class="subtitle">Live overzicht van parkeergarages en P+R-locaties in 's-Hertogenbosch</p>
+  <p class="statusline" id="statusline">Data wordt geladen…</p>
+</header>
+
+<main>
+  <section class="toolbar">
+    <input type="search" id="filter" placeholder="Filter op naam of adres…" aria-label="Filter">
+    <select id="sort" aria-label="Sorteren">
+      <option value="vrij">Sorteer: meeste vrije plekken</option>
+      <option value="naam">Sorteer: naam A–Z</option>
+      <option value="bezetting">Sorteer: minst bezet</option>
+    </select>
+    <button id="refresh" type="button">Ververs nu</button>
+  </section>
+
+  <div id="cards" class="cards"></div>
+
+  <section class="info">
+    <h2>Waarom kun je hier geen plek reserveren?</h2>
+    <p>
+      In Nederland worden <strong>openbare parkeerplaatsen (op straat) nooit gereserveerd</strong>.
+      Je start pas een parkeersessie als je er echt staat — via de betaalautomaat of een
+      parkeerapp (bijv. ParkMobile, EasyPark, ANWB Parkeren) — en betaalt achteraf op kenteken.
+      Het Nationaal Parkeer Register (NPR) registreert deze <em>parkeerrechten</em>, geen reserveringen,
+      en er bestaat geen open databron waarmee een plek op straat vooraf kan worden gereserveerd.
+    </p>
+    <p>
+      <strong>Garages</strong> kun je evenmin via open data reserveren. Alleen commerciële exploitanten
+      zoals Q-Park en ParkBee bieden reserveren aan in <em>eigen</em> garages, via hun eigen app/website
+      (tegen betaling vooraf). De gemeentelijke garages van Den Bosch bieden dit niet aan.
+      Daarom toont deze app alleen <strong>live beschikbaarheid (vrije plekken)</strong>.
+    </p>
+    <h2>Waarom zie je geen losse straatparkeerplaatsen?</h2>
+    <p>
+      Er is in Nederland geen landelijke bron met realtime bezetting <em>per individuele straatparkeerplaats</em>.
+      Wat wel open beschikbaar is: statische gegevens van alle parkeergebieden (NPR) en realtime
+      bezetting <em>per garage/terrein</em>. Deze app gebruikt daarom de garagedata van 's-Hertogenbosch.
+      (Voor gehandicaptenparkeerplaatsen op straat heeft Den Bosch wel een aparte app: Parkeren Plus.)
+    </p>
+  </section>
+</main>
+
+<footer>
+  <p>
+    Bron: <a href="https://npropendata.rdw.nl/parkingdata/v2/">RDW Open Parkeerdata (Nationaal Parkeer Register, SPDP 2.0)</a> —
+    statische en dynamische data van gemeente 's-Hertogenbosch (gebiedsbeheerder 796).
+    Data is gratis en open (CC-BY 4.0). Dit is een onofficieel prototype; controleer de borden ter plaatse.
+  </p>
+</footer>
+
+<script src="fallback-data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
